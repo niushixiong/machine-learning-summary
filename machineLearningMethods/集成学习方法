@@ -1,0 +1,110 @@
+集成方法：基于bagging 和 基于boosting 的两种
+
+1、两种方法的区别？
+  bagging方法： 并行；弱分类器独立；优化减小方差；最终将基于弱分类器投票，平均。
+  boosting方法：串行；弱分类器训练依赖于之前的结果；优化减小梯度；最终将弱分类器加权求和；
+  
+2、gbdt与xgboost的区别？
+  gbdt梯度下降拟合之前的残差，xgboost采取二阶泰勒展开，并加入了正则化处理；相当于gbdt一阶导数，xgboost二阶导数；而且xgboost可以自定义损失函数；
+  gbdt是基于cart树做基分类器，xgboost还支持线性分类器；
+  xgboost加入了正则化项，相当于预剪枝，用于防止过拟合；
+  xgboost引入了类似randomForest的随机策略，支持列采样，防止过拟合；shrink策略，每一步生成的树添加一个eta系数（同SGD的学习率，可以减小单棵树的作用）防止过拟合；
+  gbdt在计算特征分裂点时（通常用的cart树作为基分类器）使用的平方差损失，xgboost在选择特征分裂点时采用损失函数的增益；
+  xgboost能够学习缺失值分裂方向，对于缺失值处理；
+  xgboost并行化，特征维度的并行，对每个特征的特征值预先排序，然后存储为块结构，采用多线程并行查找每个特征的最佳分裂点；
+  xgboost寻找最佳分裂点：（1）预先排序+block缓存（2）分位点近似法（全局和local），结合权值hi（3）多线程并行查找 （xgboost实现的近似直方图方案；）
+  参考（
+  切分点：https://www.jianshu.com/p/a62f4dce3ce8
+  结合实例与原理，重要点：https://www.jianshu.com/p/ac1c12f3fba1
+  常考点：     https://blog.csdn.net/pearl8899/article/details/105151772#2.%20XGBoost%E4%B8%8EGBDT%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F
+  ）
+  
+3、xgboost常考点
+  3.0 简单介绍xgboost
+     首先gbdt，一种基于boosting的增强策略的加法模型，训练时候采用前向分布算法进行贪婪学习，每次学习一个cart树拟合之前的t-1棵树的预测结果与训练样本真实值的残差。
+     xgboost相对于gbdt进行了一系列优化。如：损失函数二阶泰勒展开，目标函数加入正则化，支持并行，默认缺失值处理等。
+  3.1 xgboost 遇到问题
+      todo
+  3.2 xgboost 为什么二阶泰勒展开
+    精准性：相对于gbdt的一阶泰勒展开，xgboost采用二阶泰勒展开，可以更为精准的逼近真实的损失函数；
+    可扩展性：损失函数支持自定义，只要新的损失函数二阶可导；
+  3.3 xgboost 在缺失值的处理
+     对于特征值分裂点选择，只遍历非missing的样本特征
+     在missing样本的分配问题，分别计算其划分到左右叶子节点的情况（Gr=G-Gl,Hr=H-Hl；Gl=G-Gr,Hl=H-Hr）
+     对于预测时候missing的特征样本，默认分配到右叶子节点
+     
+     扩展：
+       对存在缺失值的特征，一般的解决方法是：
+          离散型变量：用出现次数最多的特征值填充；
+          连续型变量：用中位数或均值填充；
+       一些模型如SVM和KNN，其模型原理中涉及到了对样本距离的度量，如果缺失值处理不当，最终会导致模型预测效果很差。
+       因此，对于有缺失值的数据在经过缺失处理后：
+          当数据量很小时，优先用朴素贝叶斯
+          数据量适中或者较大，用树模型，优先XGBoost
+          数据量较大，也可以用神经网络
+          避免使用距离度量相关的模型，如KNN和SVM
+        
+  3.4 xgboost 并行
+     xgboost的并行并非树级别的并行，因为其本质也是boosting策略，每颗树训练前需要等前面的树的训练完成后才开始训练；
+     xgboost的并行是特征级别的并行，其每个特征按照特征值进行预排序，并保存为block结构，对于每个特征的最优分裂点的寻找采用多线程并行加速；
+  3.5 xgboost 如何特征选择
+     同3.15特征重要性
+  3.6 xgboost 连续值处理
+      scikitlearn中的gbdt是针对连续值采用暴力枚举法寻找分割点的，而xgboost中采用了一种近似方法寻找分割点，并且可以处理离散特征（同近似直方图）
+  3.7 xgboost 过拟合
+     树的复杂度（深度，最小叶子权重，划分损失增益阈值gamma），正则化项；子采样，列采样；shrink策略，学习率步长降低；
+  3.9 xgboost 原理
+     todo 
+     带二分类例子 https://www.jianshu.com/p/ac1c12f3fba1
+     https://www.cnblogs.com/ModifyRong/p/7744987.html
+  3.10 xgboost 多分类问题
+     todo 
+     参考gdbt多分类
+     https://www.cnblogs.com/ScorpioLu/p/8296994.html
+     
+  3.11 xgboost 叶子节点权重的计算
+     obj = Sum[Gj*wj +1/2(Hj +lamda)*power(wj,2)] + alpha*T
+     Wj=-Gj/(Hj+lamda) obj=1/2*Sumj [power(Gj,2) / (Hj + lamda)] + alpha*T
+  3.12 xgboost 处理不平衡
+     通过设置样本权重，scale_pos_weight 来平衡正负样本权重； 设置max_delta_step帮助收敛（限制每颗树权重改变的最大步长？？）；
+     除此之外，还可以通过上采样、下采样、SMOTE算法或者自定义代价函数的方式解决正负样本不平衡的问题。
+  3.13 xgboost 一个树停止增长的条件
+    （1）树的深度max_depth （2）损失函数增益达到阈值
+      Gain = 1/2[power(Gl,2)/lamda+Hl + power(Gr,2)/lamda+Hr - power((Gl+Gr),2)/(Hl+Hr +lambda)] - alpha
+      Gain = Lpre - alpha
+      Gain < 0 failed 即 Lpre < alpha 时分裂停止 
+    （3）左右叶子节点，任意一个节点的样本权重和小于阈值（最小样本权重和，指的叶子节点包含的样本数量太少停止分裂）
+        其中，每个节点的样本权重和 wj* = - Gj / Hj + lamma 
+    
+  3.14 xgboost 如何对树进行剪枝
+     （1）正则化项 （2）损失增益的阈值 （3）左右叶子节点的样本权重和 （4）树的深度
+  3.15 xgboost 如何评价特征重要性
+     （1）特征在所有树种被选择作为分裂特征的次数 （2）该特征作为分裂特征的平均增益（3）该特征出现过的树的平均覆盖范围（多少样本劲歌该特征被分裂两个节点）
+  3.16 xgboost 参数调优
+  （1）以默认0.1学习率，确定estimator（2）网格调参 确定最大max_depth(3-10)，min_child_weight（1-6）（3）最小划分损失gamma，训练样本的采用比例，特征采样比例（4）正则化系数alpha lambda（5）学习率（0.01-0。1）
+  3.17 xgboost 为什么快
+     分块并行；
+     候选分位点；
+     cpu cache命中优化；缓存预取方法，每个线程分配一个连续的buffer，读取每个block中样本的梯度存取到连续的buffer中；
+     block处理优化；block预先放入内存，block按列进行解压缩，block划分到不同的硬盘提高吞吐量
+4、RF与gbdt的区别
+  相同点：都是集成方法，基于n个弱分类器去组合学习；
+  不同：
+    RF是bagging，gbdt是boosting；
+    RF每个基分类器独立，最终组合，降低其结果的方差；gbdt每次不断降低模型的偏差；
+    RF的树可以并行，gbdt的树必须串行；
+    RF样本的选择，有放回的随机抽取一部分样本；gbdt使用全部样本；
+    RF最终结果将其投票（回归平均），gdbt基于结果加权和；
+    RF对于异常数据不敏感，gdbt对于异常数据敏感；
+    RF不易过拟合，gdbt容易过拟合；
+5、LR与gbdt
+  LR是线性模型，可解释性强，很容易并行化，需要大量的特征
+  GBDT是非线性模型，可以特征组合优势，特征表达能力强，但是树与树之间无法并行训练，而且树模型很容易过拟合；
+4、xgboost与lightGBM区别
+  （1）树的生长策略 xgboost 基于level-wise层级生长，lightGBM leaf-wise生长，xgb 每一层无差别分裂，这样有可能有些节点的增益小，对结果影响小，带来不必要的计算开销；lightGBM 每次选择分裂增益最大的节点进行容易产生过拟合，所以要加入深度的限制。 
+  （2）分割点查找策略：xgb预排序算法 LGB直方图算法
+  （3）lightGBM支持类别特征，xgb需要提前做one-hot
+  
+  附录lightGBM 
+    并行策略；互斥特征绑定（EFB）；单边梯度采样（GOSS）
+    参考 https://www.biaodianfu.com/lightgbm.html

@@ -1,7 +1,39 @@
 1 语义相似度计算都有哪些方法
-
+ 1.1 语义相似的计算方法
+  
+  1 tfidf + 余弦相似度（其他方法）
+  2 词向量 结合tfidf + 余弦相似度
+  3 主题模型lsa
+  4 doc2vec + 余弦相似度
+  5 bm2.5（todo）
+  6 simhash（todo）
+  7 dssm 语义模型
+    dssm（cnn-dssm lstm-dssm）
+    使用DNN将 query和title的海量点击曝光日志，表示为低维度语义向量，并通过cosine计算距离，最终训练语义相似度模型。可以用来预测两个句子的语义相似度
+    或者获得某个句子的低纬度语义向量表达
+    三层    输入层                              表示层                     匹配层
+    sparse-》embbeding   
+    英文 word hashing ，letter-trigams ；    dnn 最后输出层tanh 128         softmax 计算query 与正doc的后验概率
+    中文单字
+    
+    极大似然估计，最小化损失函数 +sgd
+    dssm使用子向量减少切词依赖，提高泛化能力，每个词语义可复用，无监督的词向量并结合有监督的训练减小误差。但丧失了语序信息和上下文信息，
+    cnn-dssm 在输入和表示之间 加入滑动窗口 word ngram
+    lstm-dssm （todo）
+    https://blog.csdn.net/Jaygle/article/details/80927732
+   8 bert
+    
+ 1.2 相似度以及距离定义 
+    编辑距离 wmd 余弦距离 欧氏距离 曼哈顿距离 明科夫斯基距离 jaccard相似系数 皮尔逊相关系数 simhash + 汉明距离 斯皮尔曼（等级）相关系数 bm2.5
+   https://www.cnblogs.com/shona/p/11971310.html
+  
+ 1.3 语义相似度计算任务思路
+     句子长度 词的个数  相似度系数 编辑距离 等特征
+     https://zhuanlan.zhihu.com/p/51675979
+ 
 2 文本分类
  2.1 textCNN 
+  
     
  
  2.2 fast-text

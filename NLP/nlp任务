@@ -2,10 +2,30 @@
 
 2 文本分类
  2.1 textCNN 
+    
  
  2.2 fast-text
    类似于Word2vec的cbow模型，其也是三层神经网络模型，只不过最后的层不再是计算中心词的概率而是输出每个类别的概率；
    输入层n-gram， 隐藏层，输出层 层次化的softmax；
-      
- 
+         xi: 一个句子的特征，初始值为随机生成(也可以采用预训练的词向量)
+         hidden: xi的平均值
+         output: 样本标签
+      l = -1/N Sum[yn*log(f(xn*A*B))
+   fastText的核心思想就是：
+       将整篇文档的词及n-gram向量叠加平均得到文档向量，然后使用文档向量做softmax多分类。
+       这中间涉及到两个技巧：字符级n-gram特征的引入以及分层Softmax分类。
+   https://zhuanlan.zhihu.com/p/32965521?from_voters_page=true
+   https://www.cnblogs.com/huangyc/p/9768872.html
+   https://blog.csdn.net/ymaini/article/details/81489599
+   相似处：
+         图模型结构很像，都是采用embedding向量的形式，得到word的隐向量表达。
+         都采用很多相似的优化方法，比如使用Hierarchical softmax优化训练和预测中的打分速度。
+   不同处：
+         模型的输出层：word2vec的输出层，对应的是每一个term，计算某term的概率最大；而fasttext的输出层对应的是分类的label。不过不 
+      管输出层对应的是什么内容，起对应的vector都不会被保留和使用。
+         模型的输入层：word2vec的输出层，是 context window 内的term；而fasttext 对应的整个sentence的内容，包括term，也包括 n-gram的内容。
+   两者本质的不同，体现在 h-softmax的使用：
+         Word2vec的目的是得到词向量，该词向量 最终是在输入层得到，输出层对应的 h-softmax也会生成一系列的向量，但最终都被抛弃，不会使用。
+         fastText则充分利用了h-softmax的分类功能，遍历分类树的所有叶节点，找到概率最大的label（一个或者N个）
+
  2.3 bert如何做文本分类

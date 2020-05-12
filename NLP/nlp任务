@@ -22,14 +22,31 @@
     lstm-dssm （todo）
     https://blog.csdn.net/Jaygle/article/details/80927732
    8 bert
+     https://www.cnblogs.com/shona/p/12021304.html（toreview）
     
  1.2 相似度以及距离定义 
     编辑距离 wmd 余弦距离 欧氏距离 曼哈顿距离 明科夫斯基距离 jaccard相似系数 皮尔逊相关系数 simhash + 汉明距离 斯皮尔曼（等级）相关系数 bm2.5
    https://www.cnblogs.com/shona/p/11971310.html
   
  1.3 语义相似度计算任务思路
-     句子长度 词的个数  相似度系数 编辑距离 等特征
+      
+     字面统计特征：
+         两个句子的统计特征（句子长度的差距，字符单词数，相同词的个数，不同词的个数）
+     基于word2vec的距离
+         余弦相似度、曼哈顿距离、欧式距离、明科夫斯基距离、jaccard相似度、wmd距离 等特征
+     基于tfidf的距离
+         同上
+     基于lsa的距离
+         同上
+     基于doc2vec计算相似度
+         doc2vec similarity
+     模糊匹配fuzzywuzzy，计算
+         ratio相似度（完全匹配 非完全匹配 忽略顺序 去重匹配等）
+     基于wordnet计算
+         path_similarity, wup_similarity
+     http://www.mamicode.com/info-detail-2679808.html
      https://zhuanlan.zhihu.com/p/51675979
+     https://www.kesci.com/home/project/5a74405db2d655042b3bba3d
  
 2 文本分类
  2.1 textCNN 

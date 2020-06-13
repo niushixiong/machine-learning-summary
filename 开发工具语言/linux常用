@@ -2,3 +2,54 @@
 2 sed
 3 grep 
 4 其他
+
+5 vim 
+  5.1 .vimrc 配置，
+      bundle 安装，
+      配置文件，tab 和空格
+  
+  5.2 vim 文件
+      文件浏览 vplist e ctr+ww  explore
+      ctags -R
+      文件函数调转 ct + ]， ct +O ct+T跳转回之前的位置
+      前后跳转  bn bf
+      块移动 {代码块的 (句子开始结束 函数块代码块移动
+      [[ 上一个函数 ]]下一个函数
+      % 跳转到匹配的括号
+      gD 跳转到变量的定义
+      ‘ ’ 跳转到光标之前的位置
+      /word 向后查找
+      ?word 向前搜索 
+      shfit +  */# 搜索光标的单词 后/前
+      
+      行移动 num + hjkl  行首I A， ^  $
+      词移动  w b  e
+      < > 代码缩进
+      
+      gg开头
+      G结尾
+      
+      ct +f 向后翻页 ct+b 向上
+      
+ 命令行终端操作： 
+    tab提示
+ct +c 终止
+ct +d 退出连接
+ct +L 清屏
+ct +K删除当前到行尾
+ct +U光标到行首
+ct +A 行首
+ct +E 行尾
+
+
+
+shfit + ct+T新建标签
+shift + ct+W 关闭
+ct + pageUp前一个标签
+ct + pageDown 后一个
+shift +ct +pageUp 标签左移
+shift +ct + pageDwon 标签右移
+Shift + ct +N 新建窗口 
+shift + ct + Q关闭  
+  
+  

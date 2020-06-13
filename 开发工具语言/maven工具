@@ -1,0 +1,13 @@
+1 maven 安装配置
+安装
+seting
+2 pom.xml
+ depend 依赖库
+ main_class
+ 
+ mvn clean 
+ mvn package
+ mvn install
+ mvn deploy
+ 
+ 发布相关todo

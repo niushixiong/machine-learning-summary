@@ -1,5 +1,5 @@
-1 ssh spring mybaits 
-
+```1 ssh spring mybaits ```
+###
 2 java虚拟机jvm
 
 3 jsp
@@ -7,3 +7,21 @@
 4 tomcat
 
 5 java基础
+
+
+6 vue
+ 1 vue 
+ npm（cnpm） and node 安装
+ npm install
+ 2 引入js css
+  样式和js文件，cdn方式
+ 3 目录结构
+ build 构建的文件
+ node_modules 依赖的库模块
+ index.html 项目首页，
+ src/：
+  App.vue 入口
+  main.js 项目主要配置文件  route/index.js(route 配置)
+  component 组件文件目录
+添加vue模块，（， App.vue main.js ）
+ 模版 js 

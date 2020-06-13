@@ -1,3 +1,24 @@
 1 创建表
 2 分区
 3 查询
+
+1 需要安装hive
+安装配置 todo 服务以及各个节点 mysql_java.jar hive.jar 配置
+beeline的使用
+
+hive -e “sql”
+hive终端
+
+2 hive
+  show database； show tables； desc table1； show create table1；
+  
+  dt(分区==； groupby， join)
+ get_object_json(arg,$.field)
+ 
+ create table a{
+ fieldA TYPE, 
+ } 
+ partitioned by （field type comment ‘’）
+ row format delimited，
+ field terminated by ‘\t’,
+ lines terminated by ','
